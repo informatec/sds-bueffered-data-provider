@@ -1,6 +1,6 @@
 const sql = require('mssql');
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({port: 5050});
+const wss = new WebSocket.Server({port: 5051});
 const connection = sql.connect({
     user: 'sa',
     password: 'test1234',
@@ -25,8 +25,14 @@ const sqlCon = new Promise(function (resolve, reject) {
 
 wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(message) {
-        console.log(message);
+        var params = JSON.parse(message)
 
+
+        ws.send(JSON.stringify({
+            id: params.id,
+            data: buffer[params.period][params.aggrLvl][params.measure]
+        }));
+        console.log(params);
     });
 
     // ws.send('something');
@@ -79,7 +85,3 @@ function bufferData(data, def) {
     buffer[def.PARAM_PERIOD][def.PARAM_AGGR][def.PARAM_MEASURE] = data;
 }
 
-
-setTimeout(function() {
-    console.log(buffer)
-}, 5000)
